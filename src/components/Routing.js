@@ -1,5 +1,5 @@
 import Navbars from "./Navbar";
-import Home from "../containers/Home";
+import Home from "../containers/home/Home";
 import Discussion from "../containers/Discussion";
 
 import React from "react";
@@ -15,7 +15,6 @@ import {
 export default function App() {
   return (
     <Router>
-      <Navbars />
       <Switch>
 
         <Route path="/Discussion">

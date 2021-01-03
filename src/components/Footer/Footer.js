@@ -1,35 +1,39 @@
-import "./Footer.css";
-import logoTeamUp from "./brand-icon.png";
-
-const Footer = () => {
+export default function () {
   return (
-    <footer className="footer-distributed">
-      <div className="footer-left">
-        <h3>Teamup</h3>
-        <span>
-          <img alt="companyLogo" src={logoTeamUp} width="60" height="60" />
-        </span>
+    <footer>
+      <h2>MeLink</h2>
+      <div className="footer-nav footer-nav-features">
+        <h4 className="footer-nav-title">features</h4>
+        <a href="#shorten-form" className="footer-nav-anchor">link shortening</a>
+        <a href="#knbasbdhasb" className="footer-nav-anchor">branded links</a>
+        <a href="#asd" className="footer-nav-anchor">analytics</a>
+      </div>
+      <div className="footer-nav footer-nav-resources">
+        <h4 className="footer-nav-title">resources</h4>
+        <a href="#asd" className="footer-nav-anchor">blog</a>
+        <a href="#asd" className="footer-nav-anchor">developers</a>
+        <a href="#asd" className="footer-nav-anchor">support</a>
+      </div>
+      <div className="footer-nav footer-nav-company">
+        <h4 className="footer-nav-title">company</h4>
+        <a href="#asd" className="footer-nav-anchor">about</a>
+        <a href="#asd" className="footer-nav-anchor">our team</a>
+        <a href="#asd" className="footer-nav-anchor">careers</a>
+        <a href="#asd" className="footer-nav-anchor">contact</a>
+      </div>
+      <div className="social-media">
+        <a href="#asd" className="social-media-link">
+          <i className="fab fa-facebook"></i>
+        </a>
+        <a href="#asd" className="social-media-link">
+          <i className="fab fa-twitter"></i>
+        </a>
+        <a href="#asd" className="social-media-link">
+          <i className="fab fa-github"></i>
+        </a>
 
-        <p className="footer-company-name">TeamUp &copy; 2020</p>
-
-        {/* <div className="footer-icons">
-          <a href="https://discord.gg/y6rWpzCuwH">
-            <i className="fa fa-discord"></i>
-          </a>
-           <a href="#">
-            <i className="fa fa-twitter"></i>
-          </a>
-          <a href="#">
-            <i className="fa fa-linkedin"></i>
-          </a> 
-            Yang ini dikomen dulu, kalo emang ga kepake apus aja
-          
-          <a href="https://github.com/Team-Up-Dev">
-            <i className="fa fa-github"></i>
-          </a>
-        </div>  */}
       </div>
     </footer>
-  );
-};
-export default Footer;
+
+  )
+}
