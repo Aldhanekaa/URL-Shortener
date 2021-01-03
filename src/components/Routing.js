@@ -1,25 +1,89 @@
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
 import Navbars from "./Navbar";
 import Home from "../containers/Home";
-import Profile from "../containers/Profile";
 import Discussion from "../containers/Discussion";
-import Project from "../containers/Project";
-import Training from "../containers/Training";
-import NotFound from "../containers/NotFound";
 
-const Routing = () => {
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams
+} from "react-router-dom";
+
+export default function App() {
   return (
     <Router>
       <Navbars />
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/profil" component={Profile} />
-        <Route path="/discussion" component={Discussion} />
-        <Route path="/project" component={Project} />
-        <Route path="/training" component={Training} />
-        <Route component={NotFound} />
+
+        <Route path="/Discussion">
+          <Discussion />
+        </Route>
+
+        <Route exact path="/">
+          <Home />
+        </Route>
+
+        <Route >
+          <NotFound />
+        </Route>
+
       </Switch>
-    </Router>
+    </Router >
   );
-};
-export default Routing;
+}
+
+function NotFound() {
+  return (
+    <p>Error Not Found</p>
+  )
+}
+
+// // function Home() {
+// //   return <h2>Home</h2>;
+// // }
+
+// function About() {
+//   return <h2>About</h2>;
+// }
+
+// function Topics() {
+//   let match = useRouteMatch();
+
+//   return (
+//     <div>
+//       <h2>Topics</h2>
+
+//       <ul>
+//         <li>
+//           <Link to={`${match.url}/components`}>Components</Link>
+//         </li>
+//         <li>
+//           <Link to={`${match.url}/props-v-state`}>
+//             Props v. State
+//           </Link>
+//         </li>
+//       </ul>
+
+//       {/* The Topics page has its own <Switch> with more routes
+//           that build on the /topics URL path. You can think of the
+//           2nd <Route> here as an "index" page for all topics, or
+//       the page that is shown when no topic is selected */}
+//       <Switch>
+//         <Route path={`${match.path}/:topicId`}>
+//           {/* <Topic /> */}
+//         </Route>
+//         <Route path={match.path}>
+//           <h3>Please select a topic.</h3>
+//         </Route>
+//       </Switch>
+//     </div>
+//   );
+// }
+
+// // function Topic() {
+// //   let { topicId } = useParams();
+// //   return <h3>Requested topic ID: {topicId}</h3>;
+// // }
