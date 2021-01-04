@@ -1,7 +1,11 @@
 export default function () {
   return (
     <footer>
-      <h2>MeLink</h2>
+
+      <div className="footer-nav">
+        <h2 style={{ color: "white" }}>MeLink</h2>
+        <p style={{ marginTop: "20px", fontSize: "12px" }} className="footer-nav-anchor">MeLink is an open source Url-Shortener company.</p>
+      </div>
       <div className="footer-nav footer-nav-features">
         <h4 className="footer-nav-title">features</h4>
         <a href="#shorten-form" className="footer-nav-anchor">link shortening</a>
@@ -17,8 +21,8 @@ export default function () {
       <div className="footer-nav footer-nav-company">
         <h4 className="footer-nav-title">company</h4>
         <a href="#asd" className="footer-nav-anchor">about</a>
-        <a href="#asd" className="footer-nav-anchor">our team</a>
-        <a href="#asd" className="footer-nav-anchor">careers</a>
+        <a href="#asd" className="footer-nav-anchor">Faq</a>
+        <a href="#asd" className="footer-nav-anchor">contributors</a>
         <a href="#asd" className="footer-nav-anchor">contact</a>
       </div>
       <div className="social-media">

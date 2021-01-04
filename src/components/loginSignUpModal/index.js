@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import axios from 'axios';
 
 import './style.scss'
 
@@ -12,8 +13,138 @@ const Aditional = () => {
 }
 
 class ModalLeft extends Component {
+
+    state = {
+        errors: {
+
+        }
+    }
+
+    componentDidMount = () => {
+        const { email, password, name } = this.getInputs();
+
+        email.addEventListener('focusout', event => {
+            this.inputValidation(event.target)
+        })
+        password.addEventListener('focusout', event => {
+            this.inputValidation(event.target)
+        })
+
+        if (this.props.content === "signup") {
+
+            name.addEventListener('focusout', event => {
+                this.inputValidation(event.target)
+            })
+        }
+
+
+    }
+
+    // if modal was switched to signup page then ..
+    componentDidUpdate = () => {
+        const { name } = this.getInputs();
+        if (this.props.content === "signup") {
+            name.addEventListener('focusout', event => {
+                this.inputValidation(event.target)
+            })
+            if (this.state.errors.nameError) {
+                name.parentElement.classList.add("error")
+            }
+        }
+    }
+
+    // used for onChange
+    inptInline = ({ target }) => {
+        this.inputValidation(target)
+    }
+
+    // input validation
+    inputValidation = event => {
+        const value = event.value;
+        const Id = event.id;
+        const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+
+        if (value == "") {
+            this.setErrorOrNot(Id, Id + " couldn't be empty.", event, "error", value)
+
+        } else {
+            if (Id === "email" && !emailRegex.test(value)) {
+                this.setErrorOrNot(Id, "Invalid email.", event, "error", value);
+            } else {
+                this.setErrorOrNot(Id, false, event, "", value)
+            }
+        }
+    }
+
+    // set Error for input, by changing state
+    setErrorOrNot = (key, value, event, status, inputValue) => {
+
+        // console.log("first", errors)
+        // console.log("last", errors)
+        this.setState((state) => {
+            console.log(key)
+            state[key] = inputValue;
+            state["errors"][key + "Error"] = value;
+
+            return state
+        }, () => {
+            if (event) {
+                if (status === "error") {
+                    event.parentElement.classList.add("error");
+                } else {
+                    event.parentElement.classList.remove("error");
+                }
+            }
+        })
+    }
+
+    // handle form submit
+    handleFormSubmit = event => {
+        event.preventDefault();
+
+        Object.values(this.getInputs()).filter(input => input != null).forEach((input, i, p) => {
+            this.inputValidation(input)
+        })
+        if (!this.state.errors.emailError && !this.state.errors.passwordError) {
+            if (this.props.content == "login") {
+                axios({
+                    method: "POST",
+                    data: {
+                        email: this.state.name,
+                        password: this.state.password
+                    },
+                    url: "http://localhost:3004/auth/?__method=login",
+                })
+                    .then(res => {
+                        console.log("D")
+                        console.log(res)
+                    }).catch(err => {
+                        console.log(err)
+                    })
+            } else if (!this.state.errors.nameError) {
+                //
+            }
+        }
+
+    }
+
+    // get all inputs (password, email, username)
+    getInputs = () => {
+        const email = document.querySelector('#email');
+        const password = document.querySelector('#password');
+        const name = document.querySelector("#name");
+
+        return {
+            email,
+            password,
+            name
+        }
+    }
+
     render() {
+
         let content;
+        // check modal content
         if (this.props.content === "signup") {
             content = {
                 modalLink: {
@@ -39,40 +170,55 @@ class ModalLeft extends Component {
         }
 
         return (
-            <form className="modal-left" method="POST">
+            <form className="modal-left" method="POST" data-inputerror="true" data-method={content.modalLink.method} onSubmit={this.handleFormSubmit}>
                 <h1 className="modal-title">Welcome!</h1>
                 <p className="modal-desc">Fanny pack hexagon food truck, street art waistcoat kitsch.</p>
                 {content.modalLink.method === "singup" ?
-                    <div className="input-block">
+                    <div className={`input-block ${this.state.nameErr ? "error" : ""}`}>
                         <label htmlFor="name" className="input-label">* Name</label>
-                        <input type="text" autoComplete="off" name="email" id="email" placeholder="Name" />
+                        <input type="text" onChange={this.inptInline} autoComplete="off" name="name" id="name" placeholder="Name" />
+                        {this.state.errors.nameError ? <ErrorText message={this.state.errors.nameError} /> : ""
+                        }
                     </div>
                     : ""
                 }
 
                 <div className="input-block">
                     <label htmlFor="email" className="input-label">* Email</label>
-                    <input type="email" autoComplete="off" name="email" id="email" placeholder="Email" />
+                    <input type="email" onChange={this.inptInline} autoComplete="off" name="email" id="email" placeholder="Email" />
+                    {this.state.errors.emailError ? <ErrorText message={this.state.errors.emailError} /> : ""
+                    }
                 </div>
                 <div className="input-block">
                     <label htmlFor="password" className="input-label">* Password</label>
-                    <input type="password" name="password" id="password" placeholder="Password" />
+                    <input type="password" name="password" id="password" onChange={this.inptInline} placeholder="Password" />
+                    {this.state.errors.passwordError ? <ErrorText message={this.state.errors.passwordError} /> : ""
+                    }
                 </div>
                 <div className="modal-buttons">
                     {content.modalLink.method == "signup" ? "" : <a className="">Forgot your password?</a>
                     }
-                    <button className="input-button" id={content.modalLink.method}>{content.modalLink.method}</button>
+                    <button type="submit" className="input-button" id={content.modalLink.method}>{content.modalLink.method}</button>
                 </div>
                 <p className="sign-up">{content.modalLink.title} <a href={content.modalLink.link} onClick={this.props.onClick} id={content.modalLink.reverseMethod}>{content.modalLink.linkTitle}</a></p>
-            </form>
+            </form >
 
         )
     }
 }
 
+function ErrorText(props) {
+    return (
+        <p style={{
+            "fontSize": "10px",
+            "color": "#f97878",
+            "margiTop": "10px"
+        }}>{props.message}</p>
+    )
+}
+
 const ModalRight = (props) => {
     return (
-
         <div className="modal-right">
             <img src="https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=dfd2ec5a01006fd8c4d7592a381d3776&auto=format&fit=crop&w=1000&q=80" alt="" />
         </div>

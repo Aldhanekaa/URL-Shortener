@@ -116,8 +116,8 @@
         font-size: 14px;
       }
     }
-  }
-  
+
+      
   .sign-up {
     margin: 60px 0 0;
     font-size: 14px;
@@ -143,16 +143,7 @@
       background: #55311c;
     }
   }
-  
-  .input-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    font-family: "Nunito", sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.7px;
-    color: #8c7569 !important;
-    transition: 0.3s;
-  }
+
   
   .input-block {
     display: flex;
@@ -162,6 +153,30 @@
     border-radius: 4px;
     margin-bottom: 20px;
     transition: 0.3s;
+
+    &.error {
+      color: #f97878;
+      border-color: #f97878;
+      &:focus-within {
+        border-color: #f97878;
+        .input-label {
+          color: #f97878;
+        }
+      }
+      .input-label {
+        color: #f97878;
+      }
+    }
+
+    .input-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-family: "Nunito", sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.7px;
+      color: #8c7569 ;
+      transition: 0.3s;
+    }
   
     input {
       outline: 0;
@@ -180,7 +195,7 @@
       border-color: #8c7569;
   
       .input-label {
-        color: rgba(#8c7569, 0.8);
+        color: rgba(#8c7569, 0.8) ;
       }
     }
   }
@@ -225,4 +240,5 @@
     .modal-right {
       display: none;
     }
+  }
   }

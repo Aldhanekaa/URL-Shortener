@@ -3,8 +3,34 @@ import React, { Component, Fragment } from 'react'
 import Home from '../../pages/home';
 import { Navbar as HomePageNavbar, Footer, LoginSignUpModal } from '../../components'
 
+import axios from 'axios'
+
 class Parent extends Component {
   state = {}
+  // <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@8af0edd/css/all.css" rel="stylesheet" type="text/css" />
+
+  componentDidMount = () => {
+    axios({
+      method: "POST",
+      data: {
+        email: "aldhaneka@gmail.com",
+        password: "123",
+        "_method": "login"
+      },
+      withCredentials: true,
+      url: "http://localhost:3004/login",
+    })
+      .then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log(err)
+      })
+
+    // axios.get("http://localhost:3004/")
+    //   .then(res => {
+    //     console.log(res)
+    //   })
+  }
 
   loginOrSignupClick = event => {
 
@@ -30,8 +56,6 @@ class Parent extends Component {
 
   openModal = () => {
     const { dsdfwer, modal } = this.gMB()
-
-    console.log(this.state)
 
     dsdfwer.classList.add("active")
     modal.classList.add("is-open");
@@ -64,7 +88,7 @@ class Parent extends Component {
           {c}
         </div>
         <HomePageNavbar loginOrSignupClick={this.loginOrSignupClick} />
-        <Home />
+        <Home loginOrSignupClick={this.loginOrSignupClick} />
         <Footer />
 
       </Fragment>
