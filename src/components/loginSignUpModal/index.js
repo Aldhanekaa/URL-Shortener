@@ -1,13 +1,16 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, useState } from 'react';
 import axios from 'axios';
 
-import './style.scss'
+import '../../assets/scss/loginSignupModal/index.scss'
 
-const Aditional = () => {
+
+const Input = (props) => {
     return (
         <div className="input-block">
-            <label htmlFor="name" className="input-label">* Name</label>
-            <input type="text" autoComplete="off" name="email" id="email" placeholder="Name" />
+            <label htmlFor={props.id} className={`input-label ${props.className}`}>* {props.labelText}</label>
+            <input type={props.type} name={props.id} id={props.id} onChange={props.inptInline} placeholder="Password" />
+            {props.state.errors[`${props.id}Error`] ? <ErrorText message={props.state.errors[`${props.id}Error`]} /> : ""
+            }
         </div>
     )
 }
@@ -21,6 +24,7 @@ class ModalLeft extends Component {
     }
 
     componentDidMount = () => {
+
         const { email, password, name } = this.getInputs();
 
         email.addEventListener('focusout', event => {
@@ -105,26 +109,33 @@ class ModalLeft extends Component {
         Object.values(this.getInputs()).filter(input => input != null).forEach((input, i, p) => {
             this.inputValidation(input)
         })
-        if (!this.state.errors.emailError && !this.state.errors.passwordError) {
-            if (this.props.content == "login") {
-                axios({
-                    method: "POST",
-                    data: {
-                        email: this.state.name,
-                        password: this.state.password
-                    },
-                    url: "http://localhost:3004/auth/?__method=login",
-                })
-                    .then(res => {
-                        console.log("D")
-                        console.log(res)
-                    }).catch(err => {
-                        console.log(err)
+        setTimeout(() => {
+            if (!this.state.errors.emailError && !this.state.errors.passwordError) {
+                if (this.props.content == "login") {
+
+                    axios({
+                        method: "POST",
+                        data: {
+                            username: this.state.email,
+                            password: this.state.password
+                        },
+                        withCredentials: true,
+                        url: "http://localhost:3004/auth/?_method=login",
                     })
-            } else if (!this.state.errors.nameError) {
-                //
+                        .then(res => {
+                            console.log("D")
+                            console.log(res)
+                            if (res.data == "Successfully Authenticated") {
+                                window.location.replace("/Dashboard");
+                            }
+                        }).catch(err => {
+                            console.log(err)
+                        })
+                } else if (!this.state.errors.nameError) {
+                    //
+                }
             }
-        }
+        }, 1000);
 
     }
 
@@ -174,29 +185,15 @@ class ModalLeft extends Component {
                 <h1 className="modal-title">Welcome!</h1>
                 <p className="modal-desc">Fanny pack hexagon food truck, street art waistcoat kitsch.</p>
                 {content.modalLink.method === "singup" ?
-                    <div className={`input-block ${this.state.nameErr ? "error" : ""}`}>
-                        <label htmlFor="name" className="input-label">* Name</label>
-                        <input type="text" onChange={this.inptInline} autoComplete="off" name="name" id="name" placeholder="Name" />
-                        {this.state.errors.nameError ? <ErrorText message={this.state.errors.nameError} /> : ""
-                        }
-                    </div>
+                    <Input id="name" className={this.state.nameErr ? "error" : ""} type="text" inptInline={this.inptInline} state={this.state} labelText="Name" />
                     : ""
                 }
 
-                <div className="input-block">
-                    <label htmlFor="email" className="input-label">* Email</label>
-                    <input type="email" onChange={this.inptInline} autoComplete="off" name="email" id="email" placeholder="Email" />
-                    {this.state.errors.emailError ? <ErrorText message={this.state.errors.emailError} /> : ""
-                    }
-                </div>
-                <div className="input-block">
-                    <label htmlFor="password" className="input-label">* Password</label>
-                    <input type="password" name="password" id="password" onChange={this.inptInline} placeholder="Password" />
-                    {this.state.errors.passwordError ? <ErrorText message={this.state.errors.passwordError} /> : ""
-                    }
-                </div>
+                <Input id="email" type="email" inptInline={this.inptInline} state={this.state} labelText="Email" />
+                <Input id="password" type="password" inptInline={this.inptInline} state={this.state} labelText="Password" />
+
                 <div className="modal-buttons">
-                    {content.modalLink.method == "signup" ? "" : <a className="">Forgot your password?</a>
+                    {content.modalLink.method === "signup" ? "" : <a >Forgot your password?</a>
                     }
                     <button type="submit" className="input-button" id={content.modalLink.method}>{content.modalLink.method}</button>
                 </div>

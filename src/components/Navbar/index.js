@@ -42,11 +42,13 @@ class Navbar extends Component {
     mobileNav.classList.remove("active");
   }
 
+  togglePopover = () => {
+    console.log("hello!")
+  }
 
   render() {
     return (
       <nav className="main-nav">
-
         <h2>MeLink</h2>
         <ul className="nav-links" id="nav-links">
           <li className="nav-link">
@@ -64,10 +66,14 @@ class Navbar extends Component {
               resources
                         </Link>
           </li>
-          <li className="nav-link"><a href="/signin" onClick={this.props.loginOrSignupClick} className="nav-link-anchor" id="login">login</a></li>
+          {this.props.login.status ? ""
+            : <li className="nav-link"><a href="/signin" onClick={this.props.loginOrSignupClick} className="nav-link-anchor" id="login">login</a></li>
+          }
           <li className="nav-link">
-            <a href="/login" className="nav-link-anchor btn btn-sign-up" id="signup" onClick={this.props.loginOrSignupClick} role="button"
-            >sign up</a>
+            <a className="nav-link-anchor btn btn-sign-up" id="signup"
+              onClick={this.props.login.status ? this.togglePopover
+                : this.props.loginOrSignupClick} role="button"
+            >{this.props.login.status ? this.props.login.username : "sign up"}</a>
           </li>
         </ul>
         <i

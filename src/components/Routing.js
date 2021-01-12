@@ -1,37 +1,66 @@
 import Navbars from "./Navbar";
 import Home from "../containers/home/Home";
-import Discussion from "../containers/Discussion";
+import Dashboard from "../containers/Dashboard";
 
-import React from "react";
+import React, { useState, Component } from "react";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
-  useRouteMatch,
-  useParams
+  Redirect
 } from "react-router-dom";
 
-export default function App() {
-  return (
-    <Router>
-      <Switch>
+import checkUser from '../functions/getUser';
 
-        <Route path="/Discussion">
-          <Discussion />
-        </Route>
+export default class App extends Component {
 
-        <Route exact path="/">
-          <Home />
-        </Route>
+  state = {
+    loggedIn: false,
+    fetchingUser: false
+  }
 
-        <Route >
-          <NotFound />
-        </Route>
+  componentDidMount = () => {
+    checkUser()
+      .then(res => {
+        if (res.data && res.data.username) {
+          this.setState({
+            loggedIn: true,
+            fetchingUser: true
+          })
+        }
+      }).catch(err => {
+        console.log(err)
+        this.setState({
+          loggedIn: false,
+          fetchingUser: true
+        })
+      })
+  }
+  render() {
+    const { loggedIn } = this.state;
+    return (
+      <Router>
+        <Switch>
 
-      </Switch>
-    </Router >
-  );
+          <Route exact path="/Dashboard">
+            <Dashboard />
+          </Route>
+
+
+
+          <Route exact path="/">
+            {loggedIn ? <Redirect to="/dashboard" /> :
+              <Home />}
+          </Route>
+
+          <Route >
+            <NotFound />
+          </Route>
+
+        </Switch>
+      </Router >
+    );
+  }
 }
 
 function NotFound() {

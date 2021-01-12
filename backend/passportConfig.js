@@ -6,8 +6,7 @@ module.exports = function (passport) {
   passport.use(
     new localStrategy((username, password, done) => {
       User.findOne({ email: username }, (err, user) => {
-        console.log(username)
-        console.log(user)
+        console.log("username", username)
 
         if (err) throw err;
         if (!user) return done(null, false);

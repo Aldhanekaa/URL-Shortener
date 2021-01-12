@@ -45,40 +45,49 @@ require("./passportConfig")(passport);
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
 
 // Routes
-app.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) throw err;
-    if (!user) res.send("No User Exists");
-    else {
-      req.logIn(user, (err) => {
+app.route("/auth/")
+  .post((req, res, next) => {
+    if (req.query["_method"] === "login") {
+      passport.authenticate("local", (err, user, info) => {
         if (err) throw err;
-        res.send("Successfully Authenticated");
-        console.log(req.user);
-      });
-    }
-  })(req, res, next);
-});
-app.post("/register", (req, res) => {
-  User.findOne({ email: req.body.email }, async (err, doc) => {
-    if (err) throw err;
-    if (doc) res.send("User Already Exists");
-    if (!doc) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        if (!user) res.send("No User Exists");
+        else {
+          req.logIn(user, (err) => {
+            if (err) throw err;
+            res.send("Successfully Authenticated");
+            console.log(req.user);
+          });
+        }
+      })(req, res, next);
+    } else if (req.query["_method"] === "register") {
+      User.findOne({ email: req.body.email }, async (err, doc) => {
+        if (err) throw err;
+        if (doc) res.send("User Already Exists");
+        if (!doc) {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-      const newUser = new User({
-        username: req.body.username,
-        password: hashedPassword,
-        email: req.body.email
+          const newUser = new User({
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email
+          });
+          console.log(newUser)
+          await newUser.save();
+          res.send("User Created");
+        }
       });
-      console.log(newUser)
-      await newUser.save();
-      res.send("User Created");
     }
+
   });
-});
+
 app.get("/user", (req, res) => {
-  res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
+  console.log(req.user)
+  res.json(req.user); // The req.user stores the entire user that has been authenticated inside of it.
 });
+app.get("/logout", (req, res) => {
+  req.logOut();
+  res.redirect('/')
+})
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 //Start Server
 app.listen(3004, () => {

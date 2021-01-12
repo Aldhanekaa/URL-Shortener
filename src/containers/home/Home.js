@@ -1,36 +1,21 @@
+import './style.scss'
+
+
+import { useHistory } from "react-router-dom";
 import React, { Component, Fragment } from 'react'
 
 import Home from '../../pages/home';
 import { Navbar as HomePageNavbar, Footer, LoginSignUpModal } from '../../components'
 
-import axios from 'axios'
+import axios from 'axios';
 
 class Parent extends Component {
-  state = {}
-  // <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@8af0edd/css/all.css" rel="stylesheet" type="text/css" />
-
-  componentDidMount = () => {
-    axios({
-      method: "POST",
-      data: {
-        email: "aldhaneka@gmail.com",
-        password: "123",
-        "_method": "login"
-      },
-      withCredentials: true,
-      url: "http://localhost:3004/login",
-    })
-      .then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log(err)
-      })
-
-    // axios.get("http://localhost:3004/")
-    //   .then(res => {
-    //     console.log(res)
-    //   })
+  state = {
+    login: {
+      status: false
+    }
   }
+  // <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@8af0edd/css/all.css" rel="stylesheet" type="text/css" />
 
   loginOrSignupClick = event => {
 
@@ -82,13 +67,14 @@ class Parent extends Component {
       c = <LoginSignUpModal loginOrSignupClick={this.loginOrSignupClick} content={this.state.modal} closeModal={this.closeModal} />
     }
     return (
-      <Fragment >
+      <Fragment>
         <div className="dsdfwer"
         >
           {c}
         </div>
-        <HomePageNavbar loginOrSignupClick={this.loginOrSignupClick} />
+        <HomePageNavbar login={this.state.login} loginOrSignupClick={this.loginOrSignupClick} />
         <Home loginOrSignupClick={this.loginOrSignupClick} />
+
         <Footer />
 
       </Fragment>
