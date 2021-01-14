@@ -1,6 +1,8 @@
+import { Footer } from '../../assets/styles';
+
 export default function () {
   return (
-    <footer>
+    <Footer>
 
       <div className="footer-nav">
         <h2 style={{ color: "white" }}>MeLink</h2>
@@ -37,7 +39,7 @@ export default function () {
         </a>
 
       </div>
-    </footer>
+    </Footer>
 
   )
 }

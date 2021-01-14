@@ -1,6 +1,7 @@
+import './style.scss'
+
 import Navbars from "./Navbar";
-import Home from "../containers/home/Home";
-import Dashboard from "../containers/Dashboard";
+import { Routes } from "../containers/";
 
 import React, { useState, Component } from "react";
 import {
@@ -11,6 +12,9 @@ import {
 } from "react-router-dom";
 
 import checkUser from '../functions/getUser';
+
+const { Home, Dashboard } = Routes;
+
 
 export default class App extends Component {
 
@@ -40,7 +44,7 @@ export default class App extends Component {
     const { loggedIn } = this.state;
     return (
       <Router>
-        <Switch>
+        <Switch >
 
           <Route exact path="/Dashboard">
             <Dashboard />

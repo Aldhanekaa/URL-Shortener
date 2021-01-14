@@ -1,0 +1,20 @@
+
+  
+  body {
+    background-color: rgb(242, 242, 242);
+    color: var(--grayish-violet);
+    font-family: var(--poppins-font);
+    font-size: 18px;
+    min-width: 100vw;
+    max-width: 1980px;
+    overflow-x: hidden;
+    text-align: center;
+
+  }
+
+  #main[data-page="home"] {
+    .boost {
+      background: url("../assets/svgs/bg-boost-desktop.svg") center  center / 100% 100%,no-repeat var(--dark-violet);
+    
+    }
+  }
