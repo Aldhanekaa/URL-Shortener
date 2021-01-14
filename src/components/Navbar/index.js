@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { homeNavbar as Nav } from '../../assets/styles'
 
 import { Link } from 'react-router-dom'
 
@@ -48,7 +49,7 @@ class Navbar extends Component {
 
   render() {
     return (
-      <nav className="main-nav">
+      <Nav>
         <h2>MeLink</h2>
         <ul className="nav-links" id="nav-links">
           <li className="nav-link">
@@ -80,7 +81,7 @@ class Navbar extends Component {
           className="fas fa-bars"
           id="icon-mobile-nav-toggle"
         ></i>
-      </nav>
+      </Nav>
 
     )
   }

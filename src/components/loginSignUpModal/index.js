@@ -1,8 +1,9 @@
 import React, { Component, Fragment, useState } from 'react';
 import axios from 'axios';
 
-import '../../assets/scss/loginSignupModal/index.scss'
-
+import { signInSignUpModal as Modal } from '../../assets/styles'
+// import '../../assets/scss/loginSignupModal/index.scss'
+import { createGlobalStyle } from 'styled-components'
 
 const Input = (props) => {
     return (
@@ -131,8 +132,6 @@ class ModalLeft extends Component {
                         }).catch(err => {
                             console.log(err)
                         })
-                } else if (!this.state.errors.nameError) {
-                    //
                 }
             }
         }, 1000);
@@ -175,7 +174,6 @@ class ModalLeft extends Component {
                     link: "/?__method=signup",
                     method: "login",
                     reverseMethod: "signup"
-
                 }
             }
         }
@@ -234,7 +232,7 @@ const CloseButton = () => {
     )
 }
 
-class Modal extends Component {
+class ModalClass extends Component {
 
     state = {}
 
@@ -253,11 +251,10 @@ class Modal extends Component {
     }
 
     closeModal = () => {
-        const modal = document.querySelector(".modal");
-        const dsdfwer = document.querySelector('.dsdfwer');
+        const { modal, dsdfwer, main } = this.props["getModal_Main_AndModalsParent"]();
         dsdfwer.classList.remove("active")
         modal.classList.remove("is-open");
-        document.body.classList.remove("popup-active");
+        main.classList.remove("popup-active");
 
         this.props.closeModal()
     };
@@ -265,20 +262,18 @@ class Modal extends Component {
     render() {
 
         return (
-            <Fragment>
-                <div className="modal">
-                    <div className="modal-container">
+            <Modal className="modal">
+                <div className="modal-container">
 
-                        <ModalLeft content={this.props.content} onClick={this.props.loginOrSignupClick} />
-                        <ModalRight />
-                        <CloseButton />
-                    </div>
-
+                    <ModalLeft content={this.props.content} onClick={this.props.loginOrSignupClick} />
+                    <ModalRight />
+                    <CloseButton />
                 </div>
-            </Fragment>
+
+            </Modal>
 
         );
     }
 }
 
-export default Modal;
+export default ModalClass;

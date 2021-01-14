@@ -1,6 +1,8 @@
 
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, useEffect } from 'react';
+import { Home } from '../../assets/styles'
 
+const { HomeFeatures, BoostSection } = Home
 
 class Content extends Component {
     state = {}
@@ -53,7 +55,7 @@ class Content extends Component {
 
                 <Features />
 
-                <div className="boost">
+                <BoostSection>
                     <h2 className="boost-heading heading">Boost your links today</h2>
                     <a
                         href="#shorten-form"
@@ -62,7 +64,7 @@ class Content extends Component {
                     >
                         get started
       </a>
-                </div>
+                </BoostSection>
 
 
             </Fragment>
@@ -72,8 +74,9 @@ class Content extends Component {
 }
 
 function Features() {
+
     return (
-        <section className="section-features" id="section-features">
+        <HomeFeatures className="section-features" id="section-features">
             <h2 className="section-heading heading">advanced statistics</h2>
             <p className="info section-features-info">
                 Track how your links are performing across the web with our advanced
@@ -109,7 +112,7 @@ function Features() {
           </p>
                 </div>
             </div>
-        </section>
+        </HomeFeatures>
 
     )
 }
