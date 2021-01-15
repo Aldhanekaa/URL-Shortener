@@ -1,3 +1,8 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+
 const mongoose = require("mongoose");
 const express = require("express");
 const cors = require("cors");
@@ -9,9 +14,12 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 const User = require("./user");
+
+console.log(process.env.mongodb_URI)
+let MongoDB_URI = process.env.mongoDB_URI || "mongodb+srv://localhost:27017/localUrlShortener";
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 mongoose.connect(
-  "mongodb+srv://pew:jX6AI5aMjDUv1EBp@main.o2vyd.mongodb.net/localUrlShortener?retryWrites=true&w=majority",
+  "mongodb+srv://localhost:27017/localUrlShortener",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -93,3 +101,5 @@ app.get("/logout", (req, res) => {
 app.listen(3004, () => {
   console.log("Server Has Started");
 });
+
+// mongod --dbpath ~/data/db

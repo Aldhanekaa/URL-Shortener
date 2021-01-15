@@ -13,7 +13,7 @@ import {
 
 import checkUser from '../functions/getUser';
 
-const { Home, Dashboard } = Routes;
+const { Home, Dashboard, pageRoute } = Routes;
 
 
 export default class App extends Component {
@@ -24,6 +24,7 @@ export default class App extends Component {
   }
 
   componentDidMount = () => {
+    console.log('props', this.props)
     checkUser()
       .then(res => {
         if (res.data && res.data.username) {
@@ -46,11 +47,11 @@ export default class App extends Component {
       <Router>
         <Switch >
 
-          <Route exact path="/Dashboard">
+          <Route exact path="/page/Dashboard">
             <Dashboard />
           </Route>
 
-
+          <Route path="/page/:page" component={pageRoute} />
 
           <Route exact path="/">
             {loggedIn ? <Redirect to="/dashboard" /> :
