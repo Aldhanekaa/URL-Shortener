@@ -8,23 +8,42 @@ import { signInSignUpModal as Modal } from '../../assets/styles'
 // import function
 // this function is used for when we click a button to change a modal or to appear a modal
 import loginOrSignupClick from '../../functions/loginOrSignupClick';
+import { inputValidation, inptInline, setErrorForInput, getInputs, verifyInputs } from '../../functions/inputFunctions';
+import auth from '../../functions/auth';
+import { ErrorText } from './input';
 
 // import components
 import CloseButton from './closeButton';
 import ModalRight from './modalRight';
 import Input from './input'
 
+
 class ModalLeft extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.auth = auth.bind(this);
+        this.inputValidation = inputValidation.bind(this);
+        this.inptInline = inptInline.bind(this);
+        this.setErrorForInput = setErrorForInput.bind(this);
+    }
+
+    name = false;
+
     state = {
+        name: "",
+        email: "",
+        password: "",
         errors: {
 
-        }
+        },
+        termsOfUse: false
     }
 
     componentDidMount = () => {
 
-        const { email, password, name } = this.getInputs();
+        const { email, password, name } = getInputs();
 
         email.addEventListener('focusout', event => {
             this.inputValidation(event.target)
@@ -33,8 +52,8 @@ class ModalLeft extends Component {
             this.inputValidation(event.target)
         })
 
-        if (this.props.content === "signup") {
-
+        if (this.props.content === "signup" && name && !this.name) {
+            this.name = true;
             name.addEventListener('focusout', event => {
                 this.inputValidation(event.target)
             })
@@ -45,88 +64,29 @@ class ModalLeft extends Component {
 
     // if modal was switched to signup page then ..
     componentDidUpdate = () => {
-        const { name } = this.getInputs();
+        const { name } = getInputs();
         if (this.props.content === "signup") {
-            name.addEventListener('focusout', event => {
-                this.inputValidation(event.target)
-            })
+            if (!this.name) {
+                this.name = true;
+                name.addEventListener('focusout', event => {
+                    this.inputValidation(event.target)
+                })
+            }
+
             if (this.state.errors.nameError) {
                 name.parentElement.classList.add("error")
             }
-        }
-    }
+        } else
+            this.name = false;
 
-    // used for onChange
-    inptInline = ({ target }) => {
-        this.inputValidation(target)
-    }
-
-    // input validation
-    inputValidation = event => {
-        const value = event.value ? event.value.trim() : event.value;
-        const Id = event.id;
-        const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
-
-        if (!value) {
-            this.setErrorOrNot(Id, Id + " couldn't be empty.", event, "error", value)
-
-        } else {
-            if (Id === "email" && !emailRegex.test(value)) {
-                this.setErrorOrNot(Id, "Invalid email.", event, "error", value);
-            } else {
-                this.setErrorOrNot(Id, false, event, "", value)
-            }
-        }
-    }
-
-    // set Error for input, by changing state
-    setErrorOrNot = (key, value, event, status, inputValue) => {
-
-        // console.log("first", errors)
-        // console.log("last", errors)
-        this.setState((state) => {
-
-            state[key] = inputValue;
-            state["errors"][key + "Error"] = value;
-
-            return state
-        }, () => {
-            if (event) {
-                if (status === "error") {
-                    event.parentElement.classList.add("error");
-                } else {
-                    event.parentElement.classList.remove("error");
-                }
-            }
-        })
     }
 
     // handle form submit
     handleFormSubmit = event => {
         event.preventDefault();
 
-        Object.values(this.getInputs()).filter(input => input != null).forEach((input, i, p) => {
-            this.inputValidation(input)
-        })
-        setTimeout(() => {
-            if (!this.state.errors.emailError && !this.state.errors.passwordError) {
+        this.auth()
 
-            }
-        }, 1000);
-
-    }
-
-    // get all inputs (password, email, username)
-    getInputs = () => {
-        const email = document.querySelector('#email');
-        const password = document.querySelector('#password');
-        const name = document.querySelector("#name");
-
-        return {
-            email,
-            password,
-            name
-        }
     }
 
     render() {
@@ -163,18 +123,25 @@ class ModalLeft extends Component {
                 <h1 className="modal-title">Welcome!</h1>
                 <p className="modal-desc">Fanny pack hexagon food truck, street art waistcoat kitsch.</p>
                 {content.modalLink.method === "signup" ?
-                    <Input id="name" className={this.state.nameErr ? "error" : ""} type="text" inptInline={this.inptInline} state={this.state} labelText="Name" />
+                    <Input placeholder="John Doe" id="name" className={this.state.nameErr ? "error" : ""} type="text" inptInline={this.inptInline} state={this.state} labelText="Name" />
                     : ""
                 }
 
-                <Input id="email" type="email" inptInline={this.inptInline} state={this.state} labelText="Email" />
-                <Input id="password" type="password" inptInline={this.inptInline} state={this.state} labelText="Password" />
+                <Input id="email" placeholder="email@example.com" type="email" inptInline={this.inptInline} state={this.state} labelText="Email" />
+                <Input id="password" placeholder="****" type="password" inptInline={this.inptInline} state={this.state} labelText="Password" />
 
                 {content.modalLink.method === "signup"
-                    ? <div style={{ textAlign: "left", fontSize: "12px", marginBottom: "10px" }}>
-                        <p><input type="checkbox" /> I agree to <a href="#" style={{ color: "blue" }}>Terms of use</a></p></div>
-                    : ""
-
+                    && <div style={{ textAlign: "left", fontSize: "12px", marginBottom: "10px" }}>
+                        <p><input checked={this.state.termsOfUse} onChange={() => {
+                            this.setState(state => {
+                                return {
+                                    ...state,
+                                    termsOfUse: !state.termsOfUse
+                                }
+                            })
+                        }} type="checkbox" id="termsOfUse" /> <label htmlFor="termsOfUse">I agree to <a href="#" style={{ color: "blue" }}>Terms of use</a></label></p>
+                        {this.state.errors.termsOfUseError && <ErrorText message={this.state.errors.termsOfUseError} />}
+                    </div>
                 }
                 <div className="modal-buttons">
                     {content.modalLink.method === "signup" ? "" : <a >Forgot your password?</a>

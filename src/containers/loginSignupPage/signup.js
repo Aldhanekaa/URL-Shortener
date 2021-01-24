@@ -5,19 +5,18 @@ import { Link } from 'react-router-dom';
 
 export default () => {
     return (
-        // <SignUp>
-        <>
-            <link rel="stylesheet" href="https://res.cloudinary.com/daaj49exo/raw/upload/v1610725067/signup_nxtrog.css" />
+        <SignUp>
+            {/* <> */}
+            {/* <link rel="stylesheet" href="https://res.cloudinary.com/daaj49exo/raw/upload/v1610725067/signup_nxtrog.css" /> */}
 
             <div className="flex items-center min-h-screen p-6 bg-gray-50 dark:bg-gray-900">
                 <div class="flex-1 h-full max-w-4xl mx-auto overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800">
-                    <div class="flex flex-col overflow-y-auto md:flex-row">
-                        <div class="h-32 md:h-auto md:w-1/2">
+                    <div class="flex flex-col overflow-y-auto md-flex-row">
+                        <div class="h-32 md-h-auto md-w-half">
                             <img aria-hidden="true" class="object-cover w-full h-full dark:hidden" src="https://images.unsplash.com/photo-1587629716903-4bbcee7cb876?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=564&q=80" alt="Office" />
-                            <img aria-hidden="true" class="hidden object-cover w-full h-full dark:block" src="/static/media/create-account-office-dark.d34c7b50.jpeg" alt="Office" />
                         </div>
-                        <main class="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-                            <div class="w-full">
+                        <main class="flex items-center justify-center p-6 sm:p-12 md-w-half">
+                            <div class="w-full" style={{ width: "85%" }} >
                                 <h1 class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-200">Create account</h1>
                                 <label class="block text-sm text-gray-700 dark:text-gray-400">
                                     <span>Name</span>
@@ -31,10 +30,6 @@ export default () => {
                                     <span>Password</span>
                                     <input class="block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700 mt-1" type="password" placeholder="***************" />
                                 </label>
-                                <label class="block text-sm text-gray-700 dark:text-gray-400 mt-4">
-                                    <span>Confirm password</span>
-                                    <input class="block w-full text-sm focus:outline-none dark:text-gray-300 form-input leading-5 focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700 mt-1" type="password" placeholder="***************" />
-                                </label>
                                 <label class="block text-sm text-gray-700 dark:text-gray-400 inline-flex items-center mt-6">
                                     <input class="text-purple-600 form-checkbox focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray focus:border-purple-400 dark:border-gray-600 focus:shadow-outline-purple dark:focus:border-gray-600 dark:focus:shadow-outline-gray dark:bg-gray-700" type="checkbox" />
                                     <span class="ml-2">I agree to the <span class="underline">terms of use</span></span>
@@ -46,6 +41,6 @@ export default () => {
                     </div>
                 </div>
             </div>
-        </>
+        </SignUp>
     )
 }
