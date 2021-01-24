@@ -1,4 +1,10 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+
 const mongoose = require("mongoose");
+const db = mongoose.connection
 const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
@@ -9,24 +15,35 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 const User = require("./user");
+
+console.log(process.env.mongodb_URI)
+let MongoDB_URI = process.env.mongoDB_URI || "mongodb://127.0.0.1:27017/UrlShortener";
 //----------------------------------------- END OF IMPORTS---------------------------------------------------
 mongoose.connect(
-  "mongodb+srv://pew:jX6AI5aMjDUv1EBp@main.o2vyd.mongodb.net/localUrlShortener?retryWrites=true&w=majority",
+  MongoDB_URI,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  },
-  () => {
-    console.log("Mongoose Is Connected");
   }
 );
+
+db.on("error", err => console.error("error when connecting to db"))
+db.once("open", () => console.log('connected to mongoose'))
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+var whitelist = ['http://localhost:3000', 'http://localhost:3001']
 app.use(
   cors({
-    origin: "http://localhost:3000", // <-- location of the react app were connecting to
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    }, // <-- location of the react app were connecting to
     credentials: true,
   })
 );
@@ -46,24 +63,70 @@ require("./passportConfig")(passport);
 
 // Routes
 app.route("/auth/")
-  .post((req, res, next) => {
+  .post(async (req, res, next) => {
     if (req.query["_method"] === "login") {
+      console.log("user logged in")
       passport.authenticate("local", (err, user, info) => {
         if (err) throw err;
         if (!user) res.send("No User Exists");
         else {
-          req.logIn(user, (err) => {
-            if (err) throw err;
+          req.logIn(user, (error) => {
+            if (error) throw error;
             res.send("Successfully Authenticated");
             console.log(req.user);
           });
         }
       })(req, res, next);
     } else if (req.query["_method"] === "register") {
-      User.findOne({ email: req.body.email }, async (err, doc) => {
-        if (err) throw err;
-        if (doc) res.send("User Already Exists");
-        if (!doc) {
+
+      let error = false;
+
+      const errors = req.body.map((input, idx, self) => {
+        const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
+
+        let Input = { ...input }
+        if (input.value === '') Input["error"] = "Cannot be empty";
+
+        if (Input.Id === 'password' && Input.value < 5)
+          Input.error = "Password atleast has 5 characters";
+
+        if (Input.Id === 'email' && !emailRegex.test(Input.value))
+          Input.error = "Please provide a valid email address."
+
+        if (Input.Id === "termsOfUse") {
+          if (Input.value) {
+            Input.error = "";
+          } else Input.error = "please agree to the terms of use";
+        }
+
+        if (Input.error !== "" && !error) {
+          error = true;
+        }
+
+        console.log(error)
+
+        return Input;
+
+      })
+
+      if (error) {
+        res.send(errors);
+        return;
+      }
+
+      console.log(error)
+
+      console.log("errors", errors)
+      console.log(req.body)
+
+      try {
+        const user = await User.findOne({ email: req.body.email });
+        console.log("user", user)
+        if (user) {
+          res.send("user already exist");
+        }
+
+        if (!user) {
           const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
           const newUser = new User({
@@ -71,11 +134,14 @@ app.route("/auth/")
             password: hashedPassword,
             email: req.body.email
           });
-          console.log(newUser)
+
           await newUser.save();
-          res.send("User Created");
+          res.send("user Created")
         }
-      });
+      } catch (err) {
+        console.error("ERR FOUND", err);
+        res.send("error when check the user exist or not")
+      }
     }
 
   });
@@ -93,3 +159,5 @@ app.get("/logout", (req, res) => {
 app.listen(3004, () => {
   console.log("Server Has Started");
 });
+
+// mongod --dbpath ~/data/db

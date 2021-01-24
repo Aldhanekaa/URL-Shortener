@@ -2,6 +2,8 @@
 import React, { Component, Fragment, useEffect } from 'react';
 import { Home } from '../../assets/styles'
 
+import loginOrSignupClick from '../../functions/loginOrSignupClick';
+
 const { HomeFeatures, BoostSection } = Home
 
 class Content extends Component {
@@ -39,9 +41,13 @@ class Content extends Component {
                         </label>
                         <p className="error-msg" id="error-msg"></p>
                         <button
-                            onClick={this.props.loginOrSignupClick}
+                            onClick={
+                                event => {
+                                    event.preventDefault()
+                                    loginOrSignupClick(event, this.props, "signup")
+                                }
+                            }
                             className="btn btn-shorten btn-shorten-it"
-                            id="login"
                             form="shorten-form"
                             type="submit"
                         >

@@ -1,15 +1,15 @@
 
 import { useHistory } from "react-router-dom";
-import React, { Component, Fragment } from 'react'
+import React, { Component, Fragment, useEffect } from 'react'
 
 import Home from '../../pages/home';
 import { Navbar as HomePageNavbar, Footer, LoginSignUpModal } from '../../components';
 
-import { homeComponents } from '..'
+import { homeComponents } from '..';
+import { Main } from '../../assets/styles/homeComponents';
 import axios from 'axios';
 
 
-let Main;
 class Parent extends Component {
   state = {
     login: {
@@ -19,18 +19,18 @@ class Parent extends Component {
   // <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@8af0edd/css/all.css" rel="stylesheet" type="text/css" />
 
   componentDidMount = () => {
-    Main = homeComponents.Main;
-    console.log(Main)
+    console.log(this.props)
   }
+  loginOrSignupClick = modal => {
+    // console.log("loginOrSignupClick")
+    // console.log("Modal", modal)
 
-  loginOrSignupClick = event => {
+    window.history.pushState({}, "", "/page/" + modal)
 
-    if (event.target.id === 'login') {
-      this.changeModal(event.target.id, this.openModal);
-      event.preventDefault()
+    if (modal === 'login') {
+      this.changeModal(modal, this.openModal);
     } else {
-      this.changeModal(event.target.id, this.openModal)
-      event.preventDefault()
+      this.changeModal(modal, this.openModal)
     }
 
     return false
@@ -48,11 +48,17 @@ class Parent extends Component {
   }
 
   openModal = () => {
+
     const { dsdfwer, modal, main } = this.getModal_Main_AndModalsParent()
 
-    dsdfwer.classList.add("active")
-    modal.classList.add("is-open");
-    main.classList.add("popup-active");
+    if (modal) {
+      dsdfwer.classList.add("active")
+      modal.classList.add("is-open")
+      main.classList.add("popup-active");
+    } else {
+      window.alert("Something has changed..")
+    }
+
 
     return false
   }
@@ -66,7 +72,7 @@ class Parent extends Component {
   render() {
     let c;
     if (this.state.modal !== 'signup' && this.state.modal !== "login") {
-      c = this.state.modal;
+      c = "";
     } else {
       c = <LoginSignUpModal getModal_Main_AndModalsParent={this.getModal_Main_AndModalsParent} loginOrSignupClick={this.loginOrSignupClick} content={this.state.modal} closeModal={this.changeModal} />
     }
@@ -79,8 +85,8 @@ class Parent extends Component {
             >
               {c}
             </div>
-            <HomePageNavbar login={this.state.login} loginOrSignupClick={this.loginOrSignupClick} />
-            <Home loginOrSignupClick={this.loginOrSignupClick} />
+            <HomePageNavbar login={this.state.login} onClick={this.loginOrSignupClick} />
+            <Home onClick={this.loginOrSignupClick} />
 
             <Footer />
 
@@ -90,5 +96,6 @@ class Parent extends Component {
     );
   }
 }
+
 
 export default Parent;

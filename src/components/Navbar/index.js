@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { homeNavbar as Nav } from '../../assets/styles'
-
+import loginOrSignupClick from "../../functions/loginOrSignupClick";
 import { Link } from 'react-router-dom'
 
 class Navbar extends Component {
@@ -68,13 +68,23 @@ class Navbar extends Component {
                         </Link>
           </li>
           {this.props.login.status ? ""
-            : <li className="nav-link"><a href="/signin" onClick={this.props.loginOrSignupClick} className="nav-link-anchor" id="login">login</a></li>
+            : <li className="nav-link"><a href="/?page=login" onClick={
+              event => {
+                event.preventDefault()
+                loginOrSignupClick(event, this.props, "login")
+              }
+            } className="nav-link-anchor"
+              data-modal="login">login</a></li>
           }
           <li className="nav-link">
-            <a className="nav-link-anchor btn btn-sign-up" id="signup"
-              onClick={this.props.login.status ? this.togglePopover
-                : this.props.loginOrSignupClick} role="button"
-            >{this.props.login.status ? this.props.login.username : "sign up"}</a>
+            <a href="/?page=signup" className="nav-link-anchor btn btn-sign-up"
+              onClick={
+                event => {
+                  event.preventDefault()
+                  loginOrSignupClick(event, this.props, "signup")
+                }
+              } role="button"
+            >sign up</a>
           </li>
         </ul>
         <i
