@@ -33,12 +33,12 @@ export default function () {
                 }
             ],
             withCredentials: true,
-            url: "http://localhost:3004/auth/?_method=register",
+            url: "http://localhost:3004/api/auth/register",
         }).then(res => {
             console.log(res)
 
-            if (Array.isArray(res.data)) {
-                res.data.forEach(({ Id, error, value }) => {
+            if (Array.isArray(res.data.inputErrors)) {
+                res.data.inputErrors.forEach(({ Id, error, value }) => {
                     let input = Inputs[Id] ? Inputs[Id] : termsOfUse;
 
                     this.setErrorForInput(Id, error, input, value);

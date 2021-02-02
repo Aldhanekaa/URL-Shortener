@@ -15,6 +15,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 const User = require("./user");
+const { default: axios } = require('axios');
 
 console.log(process.env.mongodb_URI)
 let MongoDB_URI = process.env.mongoDB_URI || "mongodb://127.0.0.1:27017/UrlShortener";
@@ -57,14 +58,13 @@ app.use(
 app.use(cookieParser("secretcode"));
 app.use(passport.initialize());
 app.use(passport.session());
-require("./passportConfig")(passport);
+require("./passportConfig")(passport, db);
 
 //----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
 
-// Routes
-app.route("/auth/")
-  .post(async (req, res, next) => {
-    if (req.query["_method"] === "login") {
+app.route("/api/auth/login")
+  .post(passport.authenticate('local', { failureRedirect: '/login' }),
+    function (req, res) {
       console.log("user logged in")
       passport.authenticate("local", (err, user, info) => {
         if (err) throw err;
@@ -76,75 +76,89 @@ app.route("/auth/")
             console.log(req.user);
           });
         }
-      })(req, res, next);
-    } else if (req.query["_method"] === "register") {
-
-      let error = false;
-
-      const errors = req.body.map((input, idx, self) => {
-        const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
-
-        let Input = { ...input }
-        if (input.value === '') Input["error"] = "Cannot be empty";
-
-        if (Input.Id === 'password' && Input.value < 5)
-          Input.error = "Password atleast has 5 characters";
-
-        if (Input.Id === 'email' && !emailRegex.test(Input.value))
-          Input.error = "Please provide a valid email address."
-
-        if (Input.Id === "termsOfUse") {
-          if (Input.value) {
-            Input.error = "";
-          } else Input.error = "please agree to the terms of use";
-        }
-
-        if (Input.error !== "" && !error) {
-          error = true;
-        }
-
-        console.log(error)
-
-        return Input;
-
       })
 
-      if (error) {
-        res.send(errors);
-        return;
-      }
+    });
 
-      console.log(error)
+app.post('/api/auth/register', async (req, res, next) => {
+  console.log("FUCK")
+  let error = false;
 
-      console.log("errors", errors)
-      console.log(req.body)
+  let errors = req.body.map((input, idx, self) => {
+    const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;
 
-      try {
-        const user = await User.findOne({ email: req.body.email });
-        console.log("user", user)
-        if (user) {
-          res.send("user already exist");
-        }
 
-        if (!user) {
-          const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    let Input = { ...input }
+    if (input.value === '') Input["error"] = "Cannot be empty";
 
-          const newUser = new User({
-            username: req.body.username,
-            password: hashedPassword,
-            email: req.body.email
-          });
+    if (Input.Id === 'password' && Input.value.length < 5) {
+      Input.error = "Password atleast has 5 characters";
+    }
+    if (Input.Id === 'email' && !emailRegex.test(Input.value))
+      Input.error = "Please provide a valid email address."
 
-          await newUser.save();
-          res.send("user Created")
-        }
-      } catch (err) {
-        console.error("ERR FOUND", err);
-        res.send("error when check the user exist or not")
-      }
+    if (Input.Id === "termsOfUse") {
+      if (Input.value) {
+        Input.error = "";
+      } else Input.error = "please agree to the terms of use";
     }
 
-  });
+    if (Input.error && !error) {
+      error = true;
+    }
+
+    // console.log(error)
+
+    return Input;
+
+  })
+  // console.log(errors, error)
+
+  let email = errors[errors.findIndex(error => error.Id === 'email')]['value'];
+  let username = errors[errors.findIndex(err => err.Id === 'name')]['value'];
+  let password = errors[errors.findIndex(error => error.Id === 'password')]["value"];
+
+  try {
+    const user = await User.findOne({ email: email });
+    console.log("user", user)
+
+    if (user) {
+      const usernameIndex = errors.findIndex(error => error.Id == 'email');
+      errors = [...errors, { ...errors[usernameIndex], error: 'email already exists' }];
+      error = true;
+    }
+    if (error) {
+      res.send({ inputErrors: errors });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      username: username,
+      password: hashedPassword,
+      email: email
+    });
+
+    console.log(newUser)
+    await newUser.save();
+
+    res.send({ inputErrors: errors, status: 'user created' });
+
+    return;
+  } catch (err) {
+    console.error("ERR FOUND", err);
+    res.send("error when check the user exist or not");
+    return;
+  }
+}, passport.authenticate('local', (err, user, info) => {
+  console.error('err', err);
+  console.log('user', user);
+  console.log('info', info);
+
+
+}))
+
 
 app.get("/user", (req, res) => {
   console.log(req.user)

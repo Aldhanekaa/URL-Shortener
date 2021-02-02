@@ -83,6 +83,7 @@ class ModalLeft extends Component {
 
     // handle form submit
     handleFormSubmit = event => {
+        console.log(event)
         event.preventDefault();
 
         this.auth()
@@ -146,7 +147,7 @@ class ModalLeft extends Component {
                 <div className="modal-buttons">
                     {content.modalLink.method === "signup" ? "" : <a >Forgot your password?</a>
                     }
-                    <button type="submit" className="input-button" id={content.modalLink.method}>{content.modalLink.method}</button>
+                    <button type="submit" className="input-button" onClick={e => e.target.textContent = 'loading..'} id={content.modalLink.method}>{content.modalLink.method}</button>
                 </div>
                 <p className="sign-up">{content.modalLink.title} <a href={content.modalLink.link}
                     onClick={
