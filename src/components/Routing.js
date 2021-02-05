@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 
 import checkUser from '../functions/getUser';
+import axios from 'axios';
 
 const { Home, Dashboard, pageRoute } = Routes;
 
@@ -25,21 +26,40 @@ export default class App extends Component {
 
   componentDidMount = () => {
     console.log('props', this.props)
-    checkUser()
+    axios({
+      method: "POST",
+      data: {
+        username: 'a@gmail.com',
+        password: '12345'
+      },
+      withCredentials: true,
+      url: "http://localhost:3004/api/auth/login",
+    })
       .then(res => {
-        if (res.data && res.data.username) {
-          this.setState({
-            loggedIn: true,
-            fetchingUser: true
-          })
+        console.log("D")
+        console.log(res)
+        if (res.data == "Successfully Authenticated") {
+          window.history.pushState({}, "", "/dashboard")
         }
       }).catch(err => {
         console.log(err)
-        this.setState({
-          loggedIn: false,
-          fetchingUser: true
-        })
       })
+    // checkUser()
+    //   .then(res => {
+    //     console.log(res)
+    //     if (res.data && res.data.username) {
+    //       this.setState({
+    //         loggedIn: true,
+    //         fetchingUser: true
+    //       })
+    //     }
+    //   }).catch(err => {
+    //     console.log(err)
+    //     this.setState({
+    //       loggedIn: false,
+    //       fetchingUser: true
+    //     })
+    //   })
   }
   render() {
     const { loggedIn } = this.state;
