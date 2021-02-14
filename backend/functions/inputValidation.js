@@ -1,5 +1,4 @@
-module.exports = inputs => {
-    let error = false;
+module.exports = (inputs, error) => {
 
     let errors = inputs.map((input, idx, self) => {
         const emailRegex = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/;

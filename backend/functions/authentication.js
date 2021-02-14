@@ -9,7 +9,7 @@ const register = async (req, res, next) => {
 
     let error = false;
 
-    let errors = inputValidation(req.body);
+    let errors = inputValidation(req.body, error);
 
     let email = errors[errors.findIndex(error => error.Id === 'email')]['value'];
     let username = errors[errors.findIndex(err => err.Id === 'name')]['value'];

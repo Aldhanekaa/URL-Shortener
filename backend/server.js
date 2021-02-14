@@ -2,17 +2,16 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-const express = require("express");
-const app = express();
-const passport = require("passport");
-const bcrypt = require("bcryptjs");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const bodyParser = require("body-parser");
-
-const mongoose = require("mongoose");
-const authentication = require('./routes/authentication');
+const express         = require("express");
+const app             = express();
+const passport        = require("passport");
+const bcrypt          = require("bcryptjs");
+const cors            = require("cors");
+const cookieParser    = require("cookie-parser");
+const session         = require("express-session");
+const bodyParser      = require("body-parser");
+const mongoose        = require("mongoose");
+const authentication  = require('./routes/authentication');
 const db = mongoose.connection
 
 require("./passport")(passport);

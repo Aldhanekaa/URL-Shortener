@@ -1,18 +1,20 @@
 
-import React, { Component, Fragment, useEffect } from 'react';
-import { Home } from '../../assets/styles'
-
+import React, { Component, Fragment, useEffect, useState, useContext } from 'react';
+import { Home } from '../../assets/styles';
+import {ModalContext} from '../../components/loginSignUpModal/modalContext';
 import loginOrSignupClick from '../../functions/loginOrSignupClick';
 
-const { HomeFeatures, BoostSection } = Home
+const { HomeFeatures, BoostSection } = Home;
 
-class Content extends Component {
-    state = {}
-    render() {
-        return (
-            <Fragment>
 
-                <div className="hero">
+const Content = () =>  {
+    const [modal, changeModal] = useContext(ModalContext)
+
+    
+    return (
+        <Fragment>
+
+            <div className="hero">
                     <div className="hero-img-container">
                         <img
                             src="https://res.cloudinary.com/daaj49exo/image/upload/v1609601441/illustration-working_ylm1tu.svg"
@@ -44,7 +46,7 @@ class Content extends Component {
                             onClick={
                                 event => {
                                     event.preventDefault()
-                                    loginOrSignupClick(event, this.props, "signup")
+                                    modal.ChangeModal("signup", changeModal)
                                 }
                             }
                             className="btn btn-shorten btn-shorten-it"
@@ -57,26 +59,24 @@ class Content extends Component {
 
                 </div>
 
-                <div className="shortened-links"></div>
+            <div className="shortened-links"></div>
 
-                <Features />
+            <Features />
 
-                <BoostSection>
-                    <h2 className="boost-heading heading">Boost your links today</h2>
-                    <a
-                        href="#shorten-form"
-                        className="btn btn-boost btn-get-started"
-                        role="button"
-                    >
-                        get started
-      </a>
-                </BoostSection>
+            <BoostSection>
+                <h2 className="boost-heading heading">Boost your links today</h2>
+                <a
+                    href="#shorten-form"
+                    className="btn btn-boost btn-get-started"
+                    role="button"
+                >
+                    get started
+                </a>
+            </BoostSection>
+         </Fragment>
 
-
-            </Fragment>
-
-        );
-    }
+    );
+    
 }
 
 function Features() {

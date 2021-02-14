@@ -1,23 +1,23 @@
 // import library / packages / frameworks
-import React, { Component, Fragment, useState } from 'react';
-import axios from 'axios';
+import React, { Component, Fragment, useState, useContext } from 'react';
 
 // import styles
 import { signInSignUpModal as Modal } from '../../assets/styles'
 
 // import function
 // this function is used for when we click a button to change a modal or to appear a modal
-import loginOrSignupClick from '../../functions/loginOrSignupClick';
 import { inputValidation, inptInline, setErrorForInput, getInputs, verifyInputs } from '../../functions/inputFunctions';
 import auth from '../../functions/auth';
 import { ErrorText } from './input';
+import getContent from './contents';
 
 // import components
 import CloseButton from './closeButton';
 import ModalRight from './modalRight';
 import Input from './input'
 
-
+// import contexts
+import {ModalContext} from './modalContext';
 class ModalLeft extends Component {
 
     constructor(props) {
@@ -42,7 +42,7 @@ class ModalLeft extends Component {
     }
 
     componentDidMount = () => {
-
+        
         const { email, password, name } = getInputs();
 
         email.addEventListener('focusout', event => {
@@ -91,33 +91,9 @@ class ModalLeft extends Component {
     }
 
     render() {
-
-        let content;
-        // check modal content
-        if (this.props.content === "signup") {
-            content = {
-                modalLink: {
-                    title: "Already have an Account?",
-                    linkTitle: "Login now",
-                    link: "/?__method=login",
-                    method: "signup",
-                    reverseMethod: "login",
-                    forgotPassword: false
-                }
-            }
-        } else {
-            content = {
-                ForgotUrPassword: true,
-                modalLink: {
-                    title: "Don't have an account?",
-                    linkTitle: "Sign up now",
-                    link: "/?__method=signup",
-                    method: "login",
-                    reverseMethod: "signup",
-                    forgotPassword: true
-                }
-            }
-        }
+        const { ChangeModal } = this.props.modal;
+        const changeModal = this.props.changeModal;
+        let content = getContent(this.props.content);
 
         return (
             <form className="modal-left" method="POST" data-inputerror="true" data-method={content.modalLink.method} onSubmit={this.handleFormSubmit}>
@@ -153,7 +129,7 @@ class ModalLeft extends Component {
                     onClick={
                         event => {
                             event.preventDefault()
-                            loginOrSignupClick(event, this.props, content.modalLink.reverseMethod)
+                            ChangeModal(content.modalLink.reverseMethod, changeModal)
                         }
                     } >{content.modalLink.linkTitle}</a></p>
             </form >
@@ -162,35 +138,18 @@ class ModalLeft extends Component {
     }
 }
 
-class ModalClass extends Component {
+const ModalClass = () => {
+    const [modal, changeModal] = useContext(ModalContext);
 
-    state = {}
-
-    closeModal = () => {
-        window.history.pushState({}, "", "/")
-        const { modal, dsdfwer, main } = this.props["getModal_Main_AndModalsParent"]();
-        dsdfwer.classList.remove("active")
-        modal.classList.remove("is-open");
-        main.classList.remove("popup-active");
-
-        this.props.closeModal()
-    };
-
-    render() {
-
-        return (
-            <Modal className="modal">
-                <div className="modal-container">
-
-                    <ModalLeft content={this.props.content} onClick={this.props.loginOrSignupClick} />
-                    <ModalRight />
-                    <CloseButton closeModal={this.closeModal} />
-                </div>
-
-            </Modal>
-
-        );
-    }
+    return (
+        <Modal className="modal">
+            <div className="modal-container">
+                <ModalLeft changeModal={changeModal} modal={modal} content={modal.modal} />
+                <ModalRight />
+                <CloseButton />
+            </div>
+        </Modal>
+    );
 }
 
 export default ModalClass;

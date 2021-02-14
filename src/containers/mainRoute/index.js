@@ -1,100 +1,39 @@
-
-import { useHistory } from "react-router-dom";
-import React, { Component, Fragment, useEffect } from 'react'
-
+import React, { Component, useContext, useMemo, useRef, useEffect } from 'react'
 import Home from '../../pages/home';
 import { Navbar as HomePageNavbar, Footer, LoginSignUpModal } from '../../components';
-
-import { homeComponents } from '..';
 import { Main } from '../../assets/styles/homeComponents';
-import axios from 'axios';
+import {ModalContext, ModalFunctionsContext} from '../../components/loginSignUpModal/modalContext';
 
 
-class Parent extends Component {
-  state = {
-    login: {
-      status: false
-    }
-  }
-  // <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@8af0edd/css/all.css" rel="stylesheet" type="text/css" />
+const Parent = () => {
+  let c = useRef();
+  const [modal, changeModal] = useContext(ModalContext);
 
-  componentDidMount = () => {
-    console.log(this.props)
-  }
-  loginOrSignupClick = modal => {
-    // console.log("loginOrSignupClick")
-    // console.log("Modal", modal)
-
-    window.history.pushState({}, "", "/page/" + modal)
-
-    if (modal === 'login') {
-      this.changeModal(modal, this.openModal);
+  useMemo(() => {
+    if (modal.modal !== 'signup' && modal.modal !== "login") {
+      c.current = "";
     } else {
-      this.changeModal(modal, this.openModal)
+      c.current = <LoginSignUpModal />;
     }
+  }, [modal.modal]);
 
-    return false
-  }
-
-  getModal_Main_AndModalsParent = () => {
-    const modal = document.querySelector(".modal");
-    const dsdfwer = document.querySelector('.dsdfwer');
-    const main = document.querySelector("#main");
-    return {
-      modal,
-      dsdfwer,
-      main
+  useEffect(() => {
+    if (c.current) {
+      modal.openModal()
     }
-  }
-
-  openModal = () => {
-
-    const { dsdfwer, modal, main } = this.getModal_Main_AndModalsParent()
-
-    if (modal) {
-      dsdfwer.classList.add("active")
-      modal.classList.add("is-open")
-      main.classList.add("popup-active");
-    } else {
-      window.alert("Something has changed..")
-    }
+  }, [c.current]);
 
 
-    return false
-  }
-
-  changeModal = (param, next) => {
-    this.setState({
-      modal: param
-    }, next)
-  }
-
-  render() {
-    let c;
-    if (this.state.modal !== 'signup' && this.state.modal !== "login") {
-      c = "";
-    } else {
-      c = <LoginSignUpModal getModal_Main_AndModalsParent={this.getModal_Main_AndModalsParent} loginOrSignupClick={this.loginOrSignupClick} content={this.state.modal} closeModal={this.changeModal} />
-    }
-
-    return (
-      <>
-        {Main ?
-          <Main data-page="home">
-            <div className="dsdfwer"
-            >
-              {c}
-            </div>
-            <HomePageNavbar login={this.state.login} onClick={this.loginOrSignupClick} />
-            <Home onClick={this.loginOrSignupClick} />
-
-            <Footer />
-
-          </Main>
-          : ""}
-      </>
-    );
-  }
+  return (
+    <Main data-page="home">
+      <div className="dsdfwer">
+        {c.current}
+      </div>
+      <HomePageNavbar  />
+      <Home />
+      <Footer />
+    </Main>
+  );
 }
 
 

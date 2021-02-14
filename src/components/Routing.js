@@ -1,8 +1,7 @@
 import './style.scss'
 
-import Navbars from "./Navbar";
 import { Routes } from "../containers/";
-
+import {ModalProvider} from '../components/loginSignUpModal/modalContext';
 import React, { useState, Component } from "react";
 import {
   BrowserRouter as Router,
@@ -11,11 +10,9 @@ import {
   Redirect
 } from "react-router-dom";
 
-import checkUser from '../functions/getUser';
 import axios from 'axios';
 
 const { Home, Dashboard, pageRoute } = Routes;
-
 
 export default class App extends Component {
 
@@ -29,18 +26,17 @@ export default class App extends Component {
     axios({
       method: "POST",
       data: {
-        username: 'a@gmail.com',
+        username: 'aldhaneka.aufa.izzat@gmail.com',
         password: '12345'
       },
       withCredentials: true,
       url: "http://localhost:3004/api/auth/login",
     })
       .then(res => {
-        console.log("D")
         console.log(res)
-        if (res.data == "Successfully Authenticated") {
-          window.history.pushState({}, "", "/dashboard")
-        }
+        // if (res.data == "Successfully Authenticated") {
+        //   window.history.pushState({}, "", "/dashboard")
+        // }
       }).catch(err => {
         console.log(err)
       })
@@ -71,11 +67,15 @@ export default class App extends Component {
             <Dashboard />
           </Route>
 
-          <Route path="/page/:page" component={pageRoute} />
+          {/* <Route path="/page/:page" component={pageRoute} /> */}
 
           <Route exact path="/">
             {loggedIn ? <Redirect to="/dashboard" /> :
-              <Home />}
+            <ModalProvider>
+              <Home />
+
+            </ModalProvider>
+            }
           </Route>
 
           <Route >
@@ -93,50 +93,3 @@ function NotFound() {
     <p>Error Not Found</p>
   )
 }
-
-// // function Home() {
-// //   return <h2>Home</h2>;
-// // }
-
-// function About() {
-//   return <h2>About</h2>;
-// }
-
-// function Topics() {
-//   let match = useRouteMatch();
-
-//   return (
-//     <div>
-//       <h2>Topics</h2>
-
-//       <ul>
-//         <li>
-//           <Link to={`${match.url}/components`}>Components</Link>
-//         </li>
-//         <li>
-//           <Link to={`${match.url}/props-v-state`}>
-//             Props v. State
-//           </Link>
-//         </li>
-//       </ul>
-
-//       {/* The Topics page has its own <Switch> with more routes
-//           that build on the /topics URL path. You can think of the
-//           2nd <Route> here as an "index" page for all topics, or
-//       the page that is shown when no topic is selected */}
-//       <Switch>
-//         <Route path={`${match.path}/:topicId`}>
-//           {/* <Topic /> */}
-//         </Route>
-//         <Route path={match.path}>
-//           <h3>Please select a topic.</h3>
-//         </Route>
-//       </Switch>
-//     </div>
-//   );
-// }
-
-// // function Topic() {
-// //   let { topicId } = useParams();
-// //   return <h3>Requested topic ID: {topicId}</h3>;
-// // }

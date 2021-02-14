@@ -1,10 +1,6 @@
-export default (event, props, modal) => {
-    /* For debugging */
-    // console.log("CLICKED!")
-    // console.log("event", event)
-    // console.log("props", props)
-    // console.log("modal", modal)
-    /* For debugging */
+export default function(changeModalTo, changeModal)  {
+    changeModal(state => {
+        return Object.assign({}, state, {modal: changeModalTo})
+    });
 
-    props.onClick(modal)
 }
