@@ -1,53 +1,34 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { homeNavbar as Nav } from '../../assets/styles'
 import loginOrSignupClick from "../../functions/loginOrSignupClick";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
-class Navbar extends Component {
-  state = {
-    login: false
-  }
+import {ModalContext} from '../../components/loginSignUpModal/modalContext';
 
-  componentDidMount = () => {
+const Navbar = () =>  {
+  const [modal, changeModal] = useContext(ModalContext);
+
+  useEffect(() => {
     const mobileNavToggle = document.getElementById("icon-mobile-nav-toggle");
     const mobileNav = document.getElementById("nav-links");
 
     mobileNavToggle.addEventListener("click", () => {
       if (mobileNavToggle.classList.contains("fa-bars")) {
-        this.displayMobileNav(mobileNavToggle, mobileNav);
+        displayMobileNav(mobileNavToggle, mobileNav);
       } else {
-        this.hideMobileNav(mobileNavToggle, mobileNav);
+        hideMobileNav(mobileNavToggle, mobileNav);
       }
     });
 
     // simulate nav link functionality
     mobileNav.addEventListener("click", (e) => {
       if (e.target.tagName === "A") {
-        this.hideMobileNav(mobileNavToggle, mobileNav);
+        hideMobileNav(mobileNavToggle, mobileNav);
       }
     });
 
-  }
+  }, [])
 
-  displayMobileNav = (mobileNavToggle, mobileNav) => {
-    // change icon to times
-    mobileNavToggle.className = "fas fa-times";
-    // show mobile nav
-    mobileNav.classList.add("active");
-  }
-
-  hideMobileNav = (mobileNavToggle, mobileNav) => {
-    // change icon to bars
-    mobileNavToggle.className = "fas fa-bars";
-    // hide mobile nav
-    mobileNav.classList.remove("active");
-  }
-
-  togglePopover = () => {
-    console.log("hello!")
-  }
-
-  render() {
     return (
       <Nav>
         <h2>MeLink</h2>
@@ -55,37 +36,29 @@ class Navbar extends Component {
           <li className="nav-link">
             <Link to="/section-features" className="nav-link-anchor">
               features
-                        </Link>
+            </Link>
           </li>
           <li className="nav-link">
             <Link to="/pricing" className="nav-link-anchor">
               Pricing
-                        </Link>
+            </Link>
           </li>
           <li className="nav-link">
             <Link to="/recourses" className="nav-link-anchor">
-              resources
-                        </Link>
+            resources
+            </Link>
           </li>
-          {this.props.login.status ? ""
-            : <li className="nav-link"><a href="/?page=login" onClick={
-              event => {
-                event.preventDefault()
-                loginOrSignupClick(event, this.props, "login")
-              }
-            } className="nav-link-anchor"
-              data-modal="login">login</a></li>
-          }
-          <li className="nav-link">
-            <a href="/?page=signup" className="nav-link-anchor btn btn-sign-up"
-              onClick={
+          {["login", "signup"].map(item => {
+            return (
+              <li className='nav-link'><a href="/?page=login" onClick={
                 event => {
                   event.preventDefault()
-                  loginOrSignupClick(event, this.props, "signup")
+                  loginOrSignupClick(item, changeModal)
                 }
-              } role="button"
-            >sign up</a>
-          </li>
+              } role={item === "signup" ? "button" : ""} className={`nav-link${item === 'signup' ? "-anchor btn btn-sign-up" : ""}`} data-modal={item}>{item}</a></li>
+            );
+          })}
+          
         </ul>
         <i
           className="fas fa-bars"
@@ -94,7 +67,21 @@ class Navbar extends Component {
       </Nav>
 
     )
-  }
+  
+}
+
+function displayMobileNav(mobileNavToggle, mobileNav)  {
+  // change icon to times
+  mobileNavToggle.className = "fas fa-times";
+  // show mobile nav
+  mobileNav.classList.add("active");
+}
+
+function hideMobileNav(mobileNavToggle, mobileNav) {
+  // change icon to bars
+  mobileNavToggle.className = "fas fa-bars";
+  // hide mobile nav
+  mobileNav.classList.remove("active");
 }
 
 export default Navbar;
